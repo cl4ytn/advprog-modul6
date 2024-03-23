@@ -1,9 +1,9 @@
 # Commit 1 Reflection Notes:
-The handle_connection method reads HTTP requests from a Transmission Control Protocol (TCP) stream. A buffered reader `buf_reader` is instantiated to read lines from the stream. These lines are saved into a vector object called `http_request`. The method outputs the collected HTTP request lines.
+The handle_connection method reads HTTP requests from a Transmission Control Protocol (TCP) stream. A buffered reader `buf_reader` is instantiated to read lines from the stream. These lines are saved into a vector object called `http_request`. When the buffered readers gets an empty line it will stop. `println!("Request: {:#?}", http_request)` prints the HTTP request to the console. This method takes a single HTTP request and outputs the collected HTTP request lines.
 
 # Commit 2 Reflection Notes:
 ![Commit 2 Screenshot](./images/commit2.png)
-`status_line` defines itself for the HTTP response. `contents` defines the body of the HTTP response. `length` gets the length of the contents. `reponse` constructs the response using `status_line`, `contents`, and `length`. `write_all()` writes the response back to the TCP stream.
+In the update method, the function reads an HTTP request from the TCP stream and returns an HTTP reponse. `status_line` defines itself for the HTTP response. `contents` defines the body of the HTTP response. `length` gets the length of the contents. `reponse` constructs the response using `status_line`, `contents`, and `length`. `write_all()` writes the response back to the TCP stream.
 
 # Commit 3 Reflection Notes:
 ![Commit 3 Screenshot](<./images/commit3.png>)
@@ -13,3 +13,6 @@ Because we only need the first line of the HTTP request, we don't need to save a
 Now we use `match` because there are three cases: `/`, `/sleep`, and `/anything else`. "The first arm" has the same logic as our previous if statement. The second arm forces the program to sleep for 10 seconds before returning the contents of hello.html to simulate. The last arm has the same logic as the previous else statement. Its important to understand this concept because if we don't handle mulitple requests, our response times will be slow. To tackle this, we can implement thread pooling.
 
 # Commit 5 Reflection Notes:
+In main.rs, we update the main function to bind the TCP listener to our localhost, which returns an instance of TcpListener or panics, `TcpListener::bind("127.0.0.1:7878").unwrap()`. We then create a thread pool with 4 workers threats, `ThreadPool::new(4)`. Then, we iterate through the TCP connections to accept a new TCP stream. Finally, `pool.execute(|| { handle_connection(stream); })` executes a closure on one of the worker threats in the thread pool. When this happens, a TCP stream is passed into `handle_connection`.
+
+In lib.rs, we import the necessary modules to implement a thread pool. `workers` is a vector Worker instances. `sender` sends tasks to worker threads. `Job` is a type alias that holds the closure type for `execute`. `new` creates worker theads in the `workers` vector to create a new thread pool. `execute` sends a closure (`F`) to the thread pool through the `sender`. `Worker` has an id and a thread attribute. In its implementation, `new` creates a new thread to receive jobs to execute.
