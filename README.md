@@ -1,0 +1,2 @@
+# Commit 1 Reflection Notes:
+The handle_connection method reads HTTP requests from a Transmission Control Protocol (TCP) stream. A buffered reader is instantiated to read lines from the stream. These lines are saved into a vector object called http_request. The method outputs the collected HTTP request lines.
